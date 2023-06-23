@@ -89,7 +89,7 @@ const db = getFirestore(app);
 	} catch (error) {
 		console.error("Error Retrieve the players from the players collection:", error);
 	}
-	try {
+	//try {
       // Calculate and update the ELO scores for each player
       const updatedPlayers = players.map((player) => {
         let { eloScore, name } = player;
@@ -127,9 +127,9 @@ const db = getFirestore(app);
 
       // Display a success message or perform any other action
       console.log("ELO scores updated successfully!");
-    } catch (error) {
-      console.error("Error updating ELO scores:", error);
-    }
+    //} catch (error) {
+    //  console.error("Error updating ELO scores:", error);
+    //}
   };
 
   onMount(() => {
