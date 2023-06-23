@@ -4,7 +4,7 @@
   // Import the Firebase SDK and initialize the Firestore database
   import { initializeApp } from 'firebase/app';
   import { getFirestore, collection, getDocs, addDoc, query, where, limit } from 'firebase/firestore/lite';
-  import { onSnapshot, doc, updateDoc } from "firebase/firestore";
+  import { onSnapshot, doc, updateDoc, setDoc } from "firebase/firestore";
 
   const firebaseConfig = {
   apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
@@ -110,18 +110,18 @@ const db = getFirestore(app);
 	  
 	  console.log("updatedPlayers", updatedPlayers)
       // Update the ELO scores in the "players" collection
+	  const collectionRef = collection(db, "players");
       for (const updatedPlayer of updatedPlayers) {
 		console.log("updatedPlayer", updatedPlayer);
         // const playerDocRef = doc(db, "players", updatedPlayer.name);
 		// const playerDocRef = await getDocs(collection(db, "players"));
 		// const playerDocRef = collection(db, 'players').where('name', '==', updatedPlayer.name).get();
-		const q = query(collection(db, "players"), where("name", "==", updatedPlayer.name));
+		const q = query(collectionRef, where("name", "==", updatedPlayer.name));
 		const querySnapshot = await getDocs(q);
 		console.log("querySnapshot", querySnapshot)
 		const documentRef = querySnapshot.docs[0].ref;
-		console.log("Got a doc?", documentRef, querySnapshot.docs[0]);
 		const documentPath = doc(db, 'players', documentRef.id);
-		await updateDoc(documentPath, { eloScore: updatedPlayer.eloScore });
+		await setDoc(documentPath, { eloScore: updatedPlayer.eloScore }, {merge:true});
 		console.log("Doc updated?");
       }
 
