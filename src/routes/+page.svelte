@@ -19,6 +19,8 @@ const db = getFirestore(app);
 
   let winnerName = "";
   let loserName = "";
+  let players=[];
+let matches=[];
 
   const createPlayerIfNotExists = async (playerName) => {
     // Check if the player already exists in the "players" collection
@@ -57,7 +59,6 @@ const db = getFirestore(app);
     }
   };
 
-  let playerStats = [];
 
   const calculateElo = (winnerScore, loserScore, kFactor) => {
     const expectedScoreWinner = 1 / (1 + 10 ** ((loserScore - winnerScore) / 400));
@@ -70,8 +71,7 @@ const db = getFirestore(app);
   };
 
   const updateEloScores = async () => {
-	let players;
-	let matches;
+	
 	try {
 		// Retrieve the matches from the "names" collection
 		const matchesSnapshot = await getDocs(collection(db, "names"));
@@ -126,37 +126,32 @@ const db = getFirestore(app);
     //}
   };
 
-  onMount(() => {
+  onMount(async () => {
     // Retrieve the player statistics from the Firestore collection
     //const unsubscribe = onSnapshot(collection(db, "players"), (snapshot) => {
      // playerStats = snapshot.docs.map((doc) => doc.data());
     //});
 
     //return unsubscribe;
+
+	const playersSnapshot = await getDocs(collection(db, "players"));
+	players = playersSnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
   });
 </script>
 
 <main>
-  <h1>Enter Winner and Loser Names</h1>
+	<h1>Enter Winner and Loser Names</h1>
+	<h2>Winner</h2>
+	{#each players as player}
+		<button on:click={()=>winnerName=player}>{player}</button>
+	{/each}
+
+	<h2>Loser</h2>
+	{#each players as player}
+		<button on:click={()=>loserName=player}>{player}</button>
+	{/each}
+  
   <form on:submit|preventDefault={handleSubmit}>
-    <label for="winner">Winner:</label>
-    <input
-      type="text"
-      id="winner"
-      bind:value={winnerName}
-      placeholder="Enter winner name"
-      required
-    />
-
-    <label for="loser">Loser:</label>
-    <input
-      type="text"
-      id="loser"
-      bind:value={loserName}
-      placeholder="Enter loser name"
-      required
-    />
-
-    <button type="submit">Submit</button>
+    <button type="submit">Update ELO</button>
   </form>
 </main>
