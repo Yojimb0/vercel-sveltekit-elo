@@ -90,10 +90,10 @@ const db = getFirestore(app);
 	try {
       // Calculate and update the ELO scores for each player
       const updatedPlayers = players.map((player) => {
-        let { eloScore } = player;
+        let { eloScore, name } = player;
 
         for (const match of matches) {
-          if (match.winner === player.name) {
+          if (match.winner === name) {
             const loser = players.find((p) => p.name === match.loser);
             const { updatedWinnerScore } = calculateElo(eloScore, loser?.eloScore, 32);
             eloScore = updatedWinnerScore;
@@ -104,14 +104,14 @@ const db = getFirestore(app);
           }
         }
 
-        return { ...player, eloScore };
+        return { name, eloScore };
       });
 
       // Update the ELO scores in the "players" collection
       for (const updatedPlayer of updatedPlayers) {
-        // const playerDocRef = doc(db, "players", updatedPlayer.id);
+        const playerDocRef = doc(db, "players", updatedPlayer.name);
 		// const playerDocRef = await getDocs(collection(db, "players"));
-        await updateDoc(doc(db, "players"), { eloScore: updatedPlayer.eloScore });
+        await updateDoc(playerDocRef, { eloScore: updatedPlayer.eloScore });
       }
 
       // Display a success message or perform any other action
