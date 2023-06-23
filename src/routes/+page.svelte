@@ -19,6 +19,7 @@ const db = getFirestore(app);
 
   let winnerName = "";
   let loserName = "";
+  let playerToBeCreated = "John";
   let players=[];
 let matches=[];
 
@@ -34,6 +35,11 @@ let matches=[];
       console.log("New player created:", playerName);
     }
   };
+
+  const handleAddPlayer = async () => {
+    createPlayerIfNotExists(playerToBeCreated);
+    window.location.reload();
+  }
 
   const handleSubmit = async () => {
     try {
@@ -140,18 +146,24 @@ let matches=[];
 </script>
 
 <main>
-	<h1>Enter Winner and Loser Names</h1>
-	<h2>Winner</h2>
-	{#each players as player}
-		<button on:click={()=>winnerName=player}>{player}</button>
-	{/each}
 
-	<h2>Loser</h2>
-	{#each players as player}
-		<button on:click={()=>loserName=player}>{player}</button>
-	{/each}
-  
   <form on:submit|preventDefault={handleSubmit}>
+    <h1>Add match</h1>
+    <h2>Winner</h2>
+    {#each players as player}
+      <button on:click={()=>winnerName=player.name}>{player.name}</button>
+    {/each}
+
+    <h2>Loser</h2>
+    {#each players as player}
+      <button on:click={()=>loserName=player.name}>{player.name}</button>
+    {/each}
+    
     <button type="submit">Update ELO</button>
+  </form>
+
+  <form on:submit|preventDefault={handleAddPlayer}>
+    <h1>Add missing player</h1>
+    Name: <input type="text" bind:value={playerToBeCreated}>
   </form>
 </main>
