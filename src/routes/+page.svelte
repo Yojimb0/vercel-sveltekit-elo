@@ -71,15 +71,23 @@ const db = getFirestore(app);
   };
 
   const updateEloScores = async () => {
-    try {
-      // Retrieve the matches from the "names" collection
-      const matchesSnapshot = await getDocs(collection(db, "names"));
-      const matches = matchesSnapshot.docs.map((doc) => doc.data());
-
-      // Retrieve the players from the "players" collection
-      const playersSnapshot = await getDocs(collection(db, "players"));
-      const players = playersSnapshot.docs.map((doc) => doc.data());
-
+	let players;
+	let matches;
+	try {
+		// Retrieve the matches from the "names" collection
+		const matchesSnapshot = await getDocs(collection(db, "names"));
+		matches = matchesSnapshot.docs.map((doc) => doc.data());
+	} catch (error) {
+		console.error("Error Retrieve the matches from the names collection:", error);
+	}
+	try {
+		// Retrieve the players from the "players" collection
+		const playersSnapshot = await getDocs(collection(db, "players"));
+		players = playersSnapshot.docs.map((doc) => doc.data());
+	} catch (error) {
+		console.error("Error Retrieve the players from the players collection:", error);
+	}
+	try {
       // Calculate and update the ELO scores for each player
       const updatedPlayers = players.map((player) => {
         let { eloScore } = player;
