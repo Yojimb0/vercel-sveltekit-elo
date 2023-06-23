@@ -1,59 +1,70 @@
 <script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+  import { onMount } from "svelte";
+
+  // Import the Firebase SDK and initialize the Firestore database
+  import firebase from "firebase/app";
+  import "firebase/firestore";
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
+  authDomain: "vercel-sveltkit-elo.firebaseapp.com",
+  projectId: "vercel-sveltkit-elo",
+  storageBucket: "vercel-sveltkit-elo.appspot.com",
+  messagingSenderId: "117068038321",
+  appId: "1:117068038321:web:706d5d7afc274d47446290"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let winnerName = "";
+  let loserName = "";
+
+  const handleSubmit = async () => {
+    try {
+      // Store the winner and loser names in the "names" collection of Firestore
+      await db.collection("names").add({
+        winner: winnerName,
+        loser: loserName,
+      });
+
+      // Reset the input fields
+      winnerName = "";
+      loserName = "";
+
+      // Display a success message or perform any other action
+      console.log("Names stored successfully!");
+    } catch (error) {
+      console.error("Error storing names:", error);
+    }
+  };
+
+  onMount(() => {
+    // Optional: Perform any additional setup or data retrieval here
+  });
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
+<main>
+  <h1>Enter Winner and Loser Names</h1>
+  <form on:submit|preventDefault={handleSubmit}>
+    <label for="winner">Winner:</label>
+    <input
+      type="text"
+      id="winner"
+      bind:value={winnerName}
+      placeholder="Enter winner name"
+      required
+    />
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
+    <label for="loser">Loser:</label>
+    <input
+      type="text"
+      id="loser"
+      bind:value={loserName}
+      placeholder="Enter loser name"
+      required
+    />
 
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
+    <button type="submit">Submit</button>
+  </form>
+</main>
