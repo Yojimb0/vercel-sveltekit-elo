@@ -77,6 +77,7 @@ const db = getFirestore(app);
 		// Retrieve the matches from the "names" collection
 		const matchesSnapshot = await getDocs(collection(db, "names"));
 		matches = matchesSnapshot.docs.map((doc) => doc.data());
+		console.log("matches", matches)
 	} catch (error) {
 		console.error("Error Retrieve the matches from the names collection:", error);
 	}
@@ -84,6 +85,7 @@ const db = getFirestore(app);
 		// Retrieve the players from the "players" collection
 		const playersSnapshot = await getDocs(collection(db, "players"));
 		players = playersSnapshot.docs.map((doc) => doc.data());
+		console.log("players", players)
 	} catch (error) {
 		console.error("Error Retrieve the players from the players collection:", error);
 	}
@@ -103,10 +105,10 @@ const db = getFirestore(app);
             eloScore = updatedLoserScore;
           }
         }
-
         return { name, eloScore };
       });
-
+	  
+	  console.log("updatedPlayers", updatedPlayers)
       // Update the ELO scores in the "players" collection
       for (const updatedPlayer of updatedPlayers) {
 		console.log("updatedPlayer", updatedPlayer);
@@ -115,6 +117,7 @@ const db = getFirestore(app);
 		// const playerDocRef = collection(db, 'players').where('name', '==', updatedPlayer.name).get();
 		const q = query(collection(db, "players"), where("name", "==", updatedPlayer.name));
 		const querySnapshot = await getDocs(q);
+		console.log("querySnapshot", querySnapshot)
 		const documentRef = querySnapshot.docs[0].ref;
 		console.log("Got a doc?", documentRef, querySnapshot.docs[0]);
 		const documentPath = doc(db, 'players', documentRef.id);
