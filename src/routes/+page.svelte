@@ -3,7 +3,7 @@
 
   // Import the Firebase SDK and initialize the Firestore database
   import { initializeApp } from 'firebase/app';
-  import { getFirestore, collection, getDocs, getDoc, addDoc, query, where, limit, updateDoc, doc, onSnapshot } from "firebase/firestore";
+  import { getFirestore, collection, getDocs, getDoc, addDoc, query, where, limit, updateDoc, doc, onSnapshot, setDoc } from "firebase/firestore";
 
   const firebaseConfig = {
   apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
@@ -45,20 +45,10 @@ let matches=[];
   const handleSubmit = async () => {
     try {
       // Store the winner and loser names in the "names" collection of Firestore
-      await addDoc(collection(db, "names"), {
+      await setDoc(doc(db, "names", `${Date.now()}`), {
         winner: winnerName,
         loser: loserName,
       });
-
-	  createPlayerIfNotExists(winnerName);
-	  createPlayerIfNotExists(loserName)
-
-      // Reset the input fields
-      winnerName = "";
-      loserName = "";
-
-      // Display a success message or perform any other action
-      console.log("Names stored successfully!");
 
 	  updateEloScores();
     } catch (error) {
@@ -79,22 +69,22 @@ let matches=[];
 
   const updateEloScores = async () => {
 	
-	try {
-		// Retrieve the matches from the "names" collection
-		const matchesSnapshot = await getDocs(collection(db, "names"));
-		matches = matchesSnapshot.docs.map((doc) => doc.data());
-		console.log("matches", matches)
-	} catch (error) {
-		console.error("Error Retrieve the matches from the names collection:", error);
-	}
-	try {
-		// Retrieve the players from the "players" collection
-		const playersSnapshot = await getDocs(collection(db, "players"));
-		players = playersSnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-		console.log("players", players)
-	} catch (error) {
-		console.error("Error Retrieve the players from the players collection:", error);
-	}
+    try {
+      // Retrieve the matches from the "names" collection
+      const matchesSnapshot = await getDocs(collection(db, "names"));
+      matches = matchesSnapshot.docs.map((doc) => doc.data());
+      console.log("matches", matches)
+    } catch (error) {
+      console.error("Error Retrieve the matches from the names collection:", error);
+    }
+    try {
+      // Retrieve the players from the "players" collection
+      const playersSnapshot = await getDocs(collection(db, "players"));
+      players = playersSnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
+      console.log("players", players)
+    } catch (error) {
+      console.error("Error Retrieve the players from the players collection:", error);
+    }
 	//try {
       // Calculate and update the ELO scores for each player
       const updatedPlayers = players.map((player) => {
