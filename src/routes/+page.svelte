@@ -113,7 +113,7 @@ const db = getFirestore(app);
       for (const updatedPlayer of updatedPlayers) {
 		console.log("updatedPlayer", updatedPlayer);
 		const documentPath = doc(db, 'players', updatedPlayer.id);
-		await setDoc(documentPath, { eloScore: updatedPlayer.eloScore }, {merge:true});
+		await updateDoc(documentPath, { eloScore: updatedPlayer.eloScore });
 		console.log("Doc updated?");
       }
 
