@@ -3,8 +3,8 @@
 
   // Import the Firebase SDK and initialize the Firestore database
   import { initializeApp } from 'firebase/app';
-  import { getFirestore, collection, getDocs, addDoc, query, where, limit } from 'firebase/firestore/lite';
-  import { onSnapshot, doc, updateDoc, setDoc } from "firebase/firestore";
+  import { collection, getDocs, addDoc, query, where, limit } from 'firebase/firestore/lite';
+  import { getFirestore, onSnapshot, doc, updateDoc, setDoc } from "firebase/firestore";
 
   const firebaseConfig = {
   apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
