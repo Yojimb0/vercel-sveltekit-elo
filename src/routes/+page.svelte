@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
 
   // Import the Firebase SDK and initialize the Firestore database
-  // import firebase from "firebase/app";
-  // import "firebase/firestore";
   import { initializeApp } from 'firebase/app';
   import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
 
