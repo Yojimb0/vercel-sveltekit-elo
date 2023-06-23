@@ -2,8 +2,10 @@
   import { onMount } from "svelte";
 
   // Import the Firebase SDK and initialize the Firestore database
-  import firebase from "firebase/app";
-  import "firebase/firestore";
+  // import firebase from "firebase/app";
+  // import "firebase/firestore";
+  import { initializeApp } from 'firebase/app';
+  import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
 
   const firebaseConfig = {
   apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
@@ -14,8 +16,8 @@
   appId: "1:117068038321:web:706d5d7afc274d47446290"
 };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
   let winnerName = "";
   let loserName = "";
@@ -23,7 +25,7 @@
   const handleSubmit = async () => {
     try {
       // Store the winner and loser names in the "names" collection of Firestore
-      await db.collection("names").add({
+      await addDoc(collection(db, "names"), {
         winner: winnerName,
         loser: loserName,
       });
