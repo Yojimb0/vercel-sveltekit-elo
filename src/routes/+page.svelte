@@ -6,22 +6,22 @@
   import { getFirestore, collection, getDocs, getDoc, addDoc, query, where, limit, updateDoc, doc, onSnapshot, setDoc } from "firebase/firestore";
 
   const firebaseConfig = {
-  apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
-  authDomain: "vercel-sveltkit-elo.firebaseapp.com",
-  projectId: "vercel-sveltkit-elo",
-  storageBucket: "vercel-sveltkit-elo.appspot.com",
-  messagingSenderId: "117068038321",
-  appId: "1:117068038321:web:706d5d7afc274d47446290"
-};
+    apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
+    authDomain: "vercel-sveltkit-elo.firebaseapp.com",
+    projectId: "vercel-sveltkit-elo",
+    storageBucket: "vercel-sveltkit-elo.appspot.com",
+    messagingSenderId: "117068038321",
+    appId: "1:117068038321:web:706d5d7afc274d47446290"
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
   let winnerName = "";
   let loserName = "";
   let playerToBeCreated = "John";
   let players=[];
-let matches=[];
+  let matches=[];
 
   const createPlayerIfNotExists = async (playerName) => {
     // Check if the player already exists in the "players" collection
@@ -45,7 +45,7 @@ let matches=[];
   const handleSubmit = async () => {
     try {
       // Store the winner and loser names in the "names" collection of Firestore
-      await setDoc(doc(db, "names", `${Date.now()}`), {
+      await setDoc(doc(db, "matches", `${Date.now()}`), {
         winner: winnerName,
         loser: loserName,
       });
@@ -71,7 +71,7 @@ let matches=[];
 	
     try {
       // Retrieve the matches from the "names" collection
-      const matchesSnapshot = await getDocs(collection(db, "names"));
+      const matchesSnapshot = await getDocs(collection(db, "matches"));
       matches = matchesSnapshot.docs.map((doc) => doc.data());
       console.log("matches", matches)
     } catch (error) {
@@ -142,12 +142,12 @@ let matches=[];
     <h1>Add match</h1>
     <h2>Winner</h2>
     {#each players as player}
-      <button on:click={()=>winnerName=player.name} type="button">{player.name}</button>
+      <button on:click={()=>winnerName=player.name} type="button" class={winnerName==player.name?"selected"}>{player.name}</button>
     {/each}
 
     <h2>Loser</h2>
     {#each players as player}
-      <button on:click={()=>loserName=player.name} type="button">{player.name}</button>
+      <button on:click={()=>loserName=player.name} type="button" class={loserName==player.name?"selected"}>{player.name}</button>
     {/each}
   
     <form on:submit|preventDefault={handleSubmit}>
@@ -161,3 +161,8 @@ let matches=[];
     Name: <input type="text" bind:value={playerToBeCreated}>
   </form>
 </main>
+
+
+<style>
+  .selected{border:2px solid red}
+  </style>
