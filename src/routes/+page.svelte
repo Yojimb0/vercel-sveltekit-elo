@@ -37,7 +37,8 @@ let matches=[];
   };
 
   const handleAddPlayer = async () => {
-    createPlayerIfNotExists(playerToBeCreated);
+    console.log(playerToBeCreated);
+    await createPlayerIfNotExists(playerToBeCreated);
     window.location.reload();
   }
 
