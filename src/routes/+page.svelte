@@ -3,7 +3,7 @@
 
   // Import the Firebase SDK and initialize the Firestore database
   import { initializeApp } from 'firebase/app';
-  import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
+  import { getFirestore, collection, getDocs, addDoc, query, where, limit } from 'firebase/firestore/lite';
   import { onSnapshot, doc, updateDoc } from "firebase/firestore";
 
   const firebaseConfig = {
@@ -21,6 +21,19 @@ const db = getFirestore(app);
   let winnerName = "";
   let loserName = "";
 
+  const createPlayerIfNotExists = async (playerName) => {
+    // Check if the player already exists in the "players" collection
+    const playersRef = collection(db, "players");
+    const q = query(playersRef, where("name", "==", playerName), limit(1));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      // Player does not exist, create a new document in the "players" collection
+      await addDoc(playersRef, { name: playerName, eloScore: 1000 });
+      console.log("New player created:", playerName);
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       // Store the winner and loser names in the "names" collection of Firestore
@@ -28,6 +41,9 @@ const db = getFirestore(app);
         winner: winnerName,
         loser: loserName,
       });
+
+	  createPlayerIfNotExists(winnerName);
+	  createPlayerIfNotExists(loserName)
 
       // Reset the input fields
       winnerName = "";
