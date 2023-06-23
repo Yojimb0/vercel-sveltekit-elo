@@ -121,7 +121,7 @@ const db = getFirestore(app);
 		console.log("querySnapshot", querySnapshot)
 		const documentRef = querySnapshot.docs[0].ref;
 		const documentPath = doc(db, 'players', documentRef.id);
-		await setDoc(documentPath, { eloScore: updatedPlayer.eloScore }, {merge:true});
+		// await setDoc(documentPath, { eloScore: updatedPlayer.eloScore }, {merge:true});
 		console.log("Doc updated?");
       }
 
