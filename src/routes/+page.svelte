@@ -154,12 +154,26 @@
       <button type="submit">Update ELO</button>
     </form>
 
-<hr>
+    <h1>Scores</h1>
+<table>
+{#each players as player}
+<tr>
+  <td>{player.name}</td>
+  <td>{player.eloScore}</td>
+</tr>
+{/each}
 
-  <h1>Add missing player</h1>
+</table>
+
+
+<details>
+  <summary><h1>Add missing player</h1></summary>
   <form on:submit|preventDefault={handleAddPlayer}>
     Name: <input type="text" bind:value={playerToBeCreated}>
   </form>
+</details>
+  
+  
 </main>
 
 
