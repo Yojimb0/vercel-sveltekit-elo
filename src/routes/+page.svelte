@@ -3,8 +3,7 @@
 
   // Import the Firebase SDK and initialize the Firestore database
   import { initializeApp } from 'firebase/app';
-  import { getFirestore, collection, getDocs,getDoc, addDoc, query, where, limit, updateDoc } from 'firebase/firestore/lite';
-  import { onSnapshot, doc } from "firebase/firestore";
+  import { getFirestore, collection, getDocs, getDoc, addDoc, query, where, limit, updateDoc, doc, onSnapshot } from "firebase/firestore";
 
   const firebaseConfig = {
   apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
@@ -116,7 +115,7 @@ const db = getFirestore(app);
 		//await updateDoc(documentPath, { eloScore: updatedPlayer.eloScore });
 		const docRef = doc(db, 'players/'+updatedPlayer.id);
 		// const docSnap = await getDoc(docRef);
-		await updateDoc(docRef, "eloScore", updatedPlayer.eloScore);
+		await updateDoc(docRef, {eloScore: updatedPlayer.eloScore});
 		console.log("Doc updated?");
       }
 
@@ -129,11 +128,11 @@ const db = getFirestore(app);
 
   onMount(() => {
     // Retrieve the player statistics from the Firestore collection
-    const unsubscribe = onSnapshot(collection(db, "players"), (snapshot) => {
-      playerStats = snapshot.docs.map((doc) => doc.data());
-    });
+    //const unsubscribe = onSnapshot(collection(db, "players"), (snapshot) => {
+     // playerStats = snapshot.docs.map((doc) => doc.data());
+    //});
 
-    return unsubscribe;
+    //return unsubscribe;
   });
 </script>
 
