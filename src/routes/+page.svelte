@@ -142,12 +142,12 @@
     <h1>Add match</h1>
     <h2>Winner</h2>
     {#each players as player}
-      <button on:click={()=>winnerName=player.name} type="button" class={winnerName==player.name?"selected"}>{player.name}</button>
+      <button on:click={()=>winnerName=player.name} type="button" class={winnerName==player.name?"selected":""}>{player.name}</button>
     {/each}
 
     <h2>Loser</h2>
     {#each players as player}
-      <button on:click={()=>loserName=player.name} type="button" class={loserName==player.name?"selected"}>{player.name}</button>
+      <button on:click={()=>loserName=player.name} type="button" class={loserName==player.name?"selected":""}>{player.name}</button>
     {/each}
   
     <form on:submit|preventDefault={handleSubmit}>
