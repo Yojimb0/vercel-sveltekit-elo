@@ -101,8 +101,9 @@ const db = getFirestore(app);
 
       // Update the ELO scores in the "players" collection
       for (const updatedPlayer of updatedPlayers) {
-        const playerDocRef = doc(db, "players", updatedPlayer.id);
-        await updateDoc(playerDocRef, { eloScore: updatedPlayer.eloScore });
+        // const playerDocRef = doc(db, "players", updatedPlayer.id);
+		// const playerDocRef = await getDocs(collection(db, "players"));
+        await updateDoc(doc(db, "players"), { eloScore: updatedPlayer.eloScore });
       }
 
       // Display a success message or perform any other action
