@@ -84,7 +84,7 @@ const db = getFirestore(app);
 	try {
 		// Retrieve the players from the "players" collection
 		const playersSnapshot = await getDocs(collection(db, "players"));
-		players = playersSnapshot.docs.map((doc) => {console.log("doc", doc, doc.data());return doc.data()});
+		players = playersSnapshot.docs.map((doc) => {console.log("doc", doc, doc.data());const data = doc.data();return {...data, id: doc.id}});
 		console.log("players", players)
 	} catch (error) {
 		console.error("Error Retrieve the players from the players collection:", error);
