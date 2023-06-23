@@ -115,8 +115,9 @@ const db = getFirestore(app);
 		// const playerDocRef = collection(db, 'players').where('name', '==', updatedPlayer.name).get();
 		const q = query(collection(db, "players"), where("name", "==", updatedPlayer.name));
 		const querySnapshot = await getDocs(q);
-		// console.log(doc.id, " => ", doc.data());
+		console.log("Got a doc?", querySnapshot.docs[0].ref);
 		await updateDoc(querySnapshot.docs[0].ref, { eloScore: updatedPlayer.eloScore });
+		console.log("Doc updated?");
       }
 
       // Display a success message or perform any other action
