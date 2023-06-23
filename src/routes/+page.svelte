@@ -92,7 +92,7 @@ const db = getFirestore(app);
 	//try {
       // Calculate and update the ELO scores for each player
       const updatedPlayers = players.map((player) => {
-        let { eloScore, name } = player;
+        let { eloScore, name, id } = player;
 
         for (const match of matches) {
           if (match.winner === name) {
@@ -105,7 +105,7 @@ const db = getFirestore(app);
             eloScore = updatedLoserScore;
           }
         }
-        return { name, eloScore };
+        return { name, eloScore, id };
       });
 	  
 	  console.log("updatedPlayers", updatedPlayers)
@@ -120,9 +120,9 @@ const db = getFirestore(app);
 		//const querySnapshot = await getDocs(q);
 		//console.log("querySnapshot", querySnapshot)
 		//const documentRef = querySnapshot.docs[0].ref;
-		//const documentPath = doc(db, 'players', documentRef.id);
-		// await setDoc(documentPath, { eloScore: updatedPlayer.eloScore }, {merge:true});
-		// console.log("Doc updated?");
+		const documentPath = doc(db, 'players', updatedPlayer.id);
+		await setDoc(documentPath, { eloScore: updatedPlayer.eloScore }, {merge:true});
+		console.log("Doc updated?");
       }
 
       // Display a success message or perform any other action
