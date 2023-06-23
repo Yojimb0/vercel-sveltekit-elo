@@ -148,23 +148,26 @@ let matches=[];
 
 <main>
 
-  <form on:submit|preventDefault={handleSubmit}>
+  
     <h1>Add match</h1>
     <h2>Winner</h2>
     {#each players as player}
-      <button on:click={()=>winnerName=player.name}>{player.name}</button>
+      <button on:click={()=>winnerName=player.name} type="button">{player.name}</button>
     {/each}
 
     <h2>Loser</h2>
     {#each players as player}
-      <button on:click={()=>loserName=player.name}>{player.name}</button>
+      <button on:click={()=>loserName=player.name} type="button">{player.name}</button>
     {/each}
-    
-    <button type="submit">Update ELO</button>
-  </form>
+  
+    <form on:submit|preventDefault={handleSubmit}>
+      <button type="submit">Update ELO</button>
+    </form>
 
+<hr>
+
+  <h1>Add missing player</h1>
   <form on:submit|preventDefault={handleAddPlayer}>
-    <h1>Add missing player</h1>
     Name: <input type="text" bind:value={playerToBeCreated}>
   </form>
 </main>
