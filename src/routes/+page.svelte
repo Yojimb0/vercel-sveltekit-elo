@@ -226,7 +226,6 @@
     align-items:center;
     border-radius:3px;
     cursor: pointer;
-    font-family: 'Belanosima', sans-serif;
   }
 	.players .selected {
 		border: 2px solid red;
@@ -241,5 +240,6 @@
     justify-content:center;
     align-items:center;
     border-radius:3px;
+    font-family: 'Belanosima', sans-serif;
   }
 </style>
