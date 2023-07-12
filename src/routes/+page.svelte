@@ -226,7 +226,7 @@
 		border: 2px solid red;
 	}
 
-  .add{padding-block:20px}
+  .add{padding-block:20px;display: flex;align-items: center;justify-content: center;}
   .add button{
     font-size:larger;
     border:2px solid #ddd;
