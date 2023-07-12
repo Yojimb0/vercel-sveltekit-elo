@@ -249,6 +249,6 @@
     width: 300px;
     margin: auto;
   }
-  td{padding:2px 5px}
+  td{padding:3px 8px}
   td:nth-child(2){text-align: right;}
 </style>
