@@ -144,18 +144,18 @@
 </div>
 
 	<h2>Loser</h2>
-  <div class="players"></div>
-	{#each players as player}
-		<button
-			on:click={() => (loserName = player.name)}
-			type="button"
-			class={loserName == player.name ? 'selected' : ''}
-      disabled={!winnerName || winnerName == player.name}
-    >
-      {player.name}
-      </button>
-	{/each}
-</div>
+  <div class="players">
+    {#each players as player}
+      <button
+        on:click={() => (loserName = player.name)}
+        type="button"
+        class={loserName == player.name ? 'selected' : ''}
+        disabled={!winnerName || winnerName == player.name}
+      >
+        {player.name}
+        </button>
+    {/each}
+  </div>
 
 	<form on:submit|preventDefault={handleSubmit}>
 		<button type="submit">Add match</button>
