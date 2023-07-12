@@ -241,5 +241,6 @@
     align-items:center;
     border-radius:3px;
     font-family: 'Belanosima', sans-serif;
+    padding-inline:10px;
   }
 </style>
