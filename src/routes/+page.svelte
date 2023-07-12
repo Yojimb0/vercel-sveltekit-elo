@@ -136,6 +136,8 @@
 		} catch (error) {
 			console.error('Error storing names:', error);
 		}
+
+    winnerName = '';loserName = '';
 	};
 
 	onMount(async () => {
@@ -208,7 +210,9 @@
   :global(body){
     font-family: 'Nunito', sans-serif;
   }
-  h1, h2{font-family: 'Belanosima', sans-serif;}
+  h1, h2{
+    font-family: 'Belanosima', sans-serif;
+  }
   .players{
     display:flex;
     gap:10px;
@@ -222,6 +226,7 @@
     align-items:center;
     border-radius:3px;
     cursor: pointer;
+    font-family: 'Belanosima', sans-serif;
   }
 	.players .selected {
 		border: 2px solid red;
