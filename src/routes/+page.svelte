@@ -179,10 +179,11 @@
         </button>
     {/each}
   </div>
-
+<div class="add">
 	<form on:submit|preventDefault={handleSubmit}>
 		<button type="submit">Add match</button>
 	</form>
+</div>
 	<hr />
 	<h1>Scores</h1>
 	<table>
@@ -224,4 +225,15 @@
 	.players .selected {
 		border: 2px solid red;
 	}
+
+  .add{}
+  .add button{
+    font-size:larger;
+    border:2px solid #ddd;
+    height:35px;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:3px;
+  }
 </style>
