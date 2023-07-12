@@ -245,4 +245,10 @@
     padding-inline:10px;
     cursor: pointer;
   }
+  table{
+    width: 300px;
+    margin: auto;
+  }
+  td{padding:2px 5px}
+  td:nth-child(2){text-align: right;}
 </style>
