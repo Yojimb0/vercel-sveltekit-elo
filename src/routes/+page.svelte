@@ -192,7 +192,7 @@
 		{#each players as player}
 			<tr>
 				<td>{player.name}</td>
-				<td>{player.eloScore}</td>
+				<td>{Math.round(player.eloScore)}</td>
 			</tr>
 		{/each}
 	</table>
