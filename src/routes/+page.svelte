@@ -41,6 +41,7 @@
 	let playerToBeCreated = 'John';
 	let players: Player[] = [];
 	let matches = [];
+  const color = ['gold', 'silver', 'darkgoldenrod']
 
 	$: sortedPlayersDescending = players.sort((a, b) => b.eloScore - a.eloScore);
 
@@ -189,8 +190,8 @@
 	<hr />
 	<h1>Scores</h1>
 	<table>
-		{#each players as player}
-			<tr>
+		{#each players as player, i}
+			<tr style={`background:${color[i]||'white'}`}>
 				<td>{player.name}</td>
 				<td>{Math.round(player.eloScore)}</td>
 			</tr>
