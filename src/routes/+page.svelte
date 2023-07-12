@@ -146,6 +146,11 @@
 	});
 </script>
 
+<svelte:head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Belanosima&family=Nunito&display=swap" rel="stylesheet">
+</svelte:head>
 <main>
 	<h1>Ping pong scores</h1>
 	<h2>Winner</h2>
@@ -199,8 +204,14 @@
 </main>
 
 <style>
+  :global(body){
+    font-family: 'Nunito', sans-serif;
+  }
+  h1, h2{font-family: 'Belanosima', sans-serif;}
   .players{
-    display:flex;gap:10px;
+    display:flex;
+    gap:10px;
+    flex-flow: row wrap;
   }
   .players button{
     border:2px solid #ddd;
