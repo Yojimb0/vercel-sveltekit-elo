@@ -1,182 +1,178 @@
-<script>
-  import { onMount } from "svelte";
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import EloRank from 'elo-rank';
+	// Import the Firebase SDK and initialize the Firestore database
+	import { initializeApp } from 'firebase/app';
+	import {
+		getFirestore,
+		collection,
+		getDocs,
+		addDoc,
+		query,
+		where,
+		limit,
+		updateDoc,
+		doc,
+		setDoc
+	} from 'firebase/firestore';
 
-  // Import the Firebase SDK and initialize the Firestore database
-  import { initializeApp } from 'firebase/app';
-  import { getFirestore, collection, getDocs, getDoc, addDoc, query, where, limit, updateDoc, doc, onSnapshot, setDoc } from "firebase/firestore";
+	const firebaseConfig = {
+		apiKey: 'AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk',
+		authDomain: 'vercel-sveltkit-elo.firebaseapp.com',
+		projectId: 'vercel-sveltkit-elo',
+		storageBucket: 'vercel-sveltkit-elo.appspot.com',
+		messagingSenderId: '117068038321',
+		appId: '1:117068038321:web:706d5d7afc274d47446290'
+	};
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk",
-    authDomain: "vercel-sveltkit-elo.firebaseapp.com",
-    projectId: "vercel-sveltkit-elo",
-    storageBucket: "vercel-sveltkit-elo.appspot.com",
-    messagingSenderId: "117068038321",
-    appId: "1:117068038321:web:706d5d7afc274d47446290"
-  };
+	// IF YOU CHANGE THIS ARG YOU SHOULD RECALCULATE ALL ELOS
+	const elo = new EloRank(40);
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+	const app = initializeApp(firebaseConfig);
+	const db = getFirestore(app);
 
-  let winnerName = "";
-  let loserName = "";
-  let playerToBeCreated = "John";
-  let players=[];
-  let matches=[];
+	type Player = {
+		name: string;
+		eloScore: number;
+	};
 
-  const createPlayerIfNotExists = async (playerName) => {
-    // Check if the player already exists in the "players" collection
-    const playersRef = collection(db, "players");
-    const q = query(playersRef, where("name", "==", playerName), limit(1));
-    const querySnapshot = await getDocs(q);
+	let winnerName = '';
+	let loserName = '';
+	let playerToBeCreated = 'John';
+	let players: Player[] = [];
+	let matches = [];
 
-    if (querySnapshot.empty) {
-      // Player does not exist, create a new document in the "players" collection
-      await addDoc(playersRef, { name: playerName, eloScore: 1000 });
-      console.log("New player created:", playerName);
-    }
-  };
+	const calculateNewElo = ({
+		winner,
+		loser
+	}: {
+		winner: number;
+		loser: number;
+	}): { winner: number; loser: number } => {
+		const expectedScoreWinner = elo.getExpected(winner, loser);
+		const expectedScoreLoser = elo.getExpected(loser, winner);
+		return {
+			winner: elo.updateRating(expectedScoreWinner, 1, winner),
+			loser: elo.updateRating(expectedScoreLoser, 0, loser)
+		};
+	};
 
-  const handleAddPlayer = async () => {
-    console.log(playerToBeCreated);
-    await createPlayerIfNotExists(playerToBeCreated);
-    window.location.reload();
-  }
+	const getPlayer = async (name: string): Promise<(Player & { id: string }) | null> => {
+		const playersRef = collection(db, 'players');
+		const q = query(playersRef, where('name', '==', name), limit(1));
+		const querySnapshot = await getDocs(q);
+		if (querySnapshot.empty) {
+			return null;
+		}
+		return {
+			...querySnapshot.docs[0].data(),
+			id: querySnapshot.docs[0].id
+		} as Player & {
+			id: string;
+		};
+	};
 
-  const handleSubmit = async () => {
-    try {
-      // Store the winner and loser names in the "names" collection of Firestore
-      await setDoc(doc(db, "matches", `${Date.now()}`), {
-        winner: winnerName,
-        loser: loserName,
-      });
+	const createPlayerIfNotExists = async (playerName: string) => {
+		// Check if the player already exists in the "players" collection
+		const playersRef = collection(db, 'players');
+		const q = query(playersRef, where('name', '==', playerName), limit(1));
+		const querySnapshot = await getDocs(q);
 
-	  updateEloScores();
-    } catch (error) {
-      console.error("Error storing names:", error);
-    }
-  };
+		if (querySnapshot.empty) {
+			// Player does not exist, create a new document in the "players" collection
+			await addDoc(playersRef, { name: playerName, eloScore: 1200 });
+			console.log('New player created:', playerName);
+		}
+	};
 
+	const handleAddPlayer = async () => {
+		console.log(playerToBeCreated);
+		await createPlayerIfNotExists(playerToBeCreated);
+		window.location.reload();
+	};
 
-  const calculateElo = (winnerScore, loserScore, kFactor) => {
-    const expectedScoreWinner = 1 / (1 + 10 ** ((loserScore - winnerScore) / 400));
-    const expectedScoreLoser = 1 - expectedScoreWinner;
+	const handleSubmit = async () => {
+		if (!winnerName || !loserName) return;
+		try {
+			const winner = await getPlayer(winnerName);
+			const loser = await getPlayer(loserName);
+			if (!winner || !loser) {
+				return console.error('Missing at least one player:', winner, loser);
+			}
+			await setDoc(doc(db, 'matches', `${Date.now()}`), {
+				winner: winnerName,
+				loser: loserName
+			});
+			const { winner: newWinnerElo, loser: newLoserElo } = calculateNewElo({
+				winner: winner.eloScore,
+				loser: loser.eloScore
+			});
 
-    const updatedWinnerScore = winnerScore + kFactor * (1 - expectedScoreWinner);
-    const updatedLoserScore = loserScore + kFactor * (0 - expectedScoreLoser);
+			await updateDoc(doc(db, 'players', winner.id), {
+				eloScore: newWinnerElo
+			});
 
-    return { updatedWinnerScore, updatedLoserScore };
-  };
+			await updateDoc(doc(db, 'players', loser.id), {
+				eloScore: newLoserElo
+			});
+		} catch (error) {
+			console.error('Error storing names:', error);
+		}
+	};
 
-  const updateEloScores = async () => {
-	
-    try {
-      // Retrieve the matches from the "names" collection
-      const matchesSnapshot = await getDocs(collection(db, "matches"));
-      matches = matchesSnapshot.docs.map((doc) => doc.data());
-      console.log("matches", matches)
-    } catch (error) {
-      console.error("Error Retrieve the matches from the names collection:", error);
-    }
-    try {
-      // Retrieve the players from the "players" collection
-      const playersSnapshot = await getDocs(collection(db, "players"));
-      players = playersSnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-      console.log("players", players)
-    } catch (error) {
-      console.error("Error Retrieve the players from the players collection:", error);
-    }
-	//try {
-      // Calculate and update the ELO scores for each player
-      const updatedPlayers = players.map((player) => {
-        let { eloScore, name, id } = player;
+	onMount(async () => {
+		const playersSnapshot = await getDocs(collection(db, 'players'));
 
-        for (const match of matches) {
-          if (match.winner === name) {
-            const loser = players.find((p) => p.name === match.loser);
-            const { updatedWinnerScore } = calculateElo(eloScore, loser?.eloScore, 32);
-            eloScore = updatedWinnerScore;
-          } else if (match.loser === player.name) {
-            const winner = players.find((p) => p.name === match.winner);
-            const { updatedLoserScore } = calculateElo(eloScore, winner?.eloScore, 32);
-            eloScore = updatedLoserScore;
-          }
-        }
-        return { name, eloScore, id };
-      });
-	  
-	  console.log("updatedPlayers", updatedPlayers)
-      // Update the ELO scores in the "players" collection
-      for (const updatedPlayer of updatedPlayers) {
-		console.log("updatedPlayer", updatedPlayer);
-		//const documentPath = doc(db, 'players', updatedPlayer.id);
-		//await updateDoc(documentPath, { eloScore: updatedPlayer.eloScore });
-		const docRef = doc(db, 'players/'+updatedPlayer.id);
-		// const docSnap = await getDoc(docRef);
-		await updateDoc(docRef, {eloScore: updatedPlayer.eloScore});
-		console.log("Doc updated?");
-      }
-
-      // Display a success message or perform any other action
-      console.log("ELO scores updated successfully!");
-    //} catch (error) {
-    //  console.error("Error updating ELO scores:", error);
-    //}
-  };
-
-  onMount(async () => {
-    // Retrieve the player statistics from the Firestore collection
-    //const unsubscribe = onSnapshot(collection(db, "players"), (snapshot) => {
-     // playerStats = snapshot.docs.map((doc) => doc.data());
-    //});
-
-    //return unsubscribe;
-
-	const playersSnapshot = await getDocs(collection(db, "players"));
-	players = playersSnapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-  });
+		// @ts-ignore
+		players = playersSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+	});
 </script>
 
 <main>
+	<h1>Add match</h1>
+	<h2>Winner</h2>
+	{#each players as player}
+		<button
+			on:click={() => (winnerName = player.name)}
+			type="button"
+			class={winnerName == player.name ? 'selected' : ''}>{player.name}</button
+		>
+	{/each}
 
-  
-    <h1>Add match</h1>
-    <h2>Winner</h2>
-    {#each players as player}
-      <button on:click={()=>winnerName=player.name} type="button" class={winnerName==player.name?"selected":""}>{player.name}</button>
-    {/each}
+	<h2>Loser</h2>
+	{#each players as player}
+		<button
+			on:click={() => (loserName = player.name)}
+			type="button"
+			class={loserName == player.name ? 'selected' : ''}>{player.name}</button
+		>
+	{/each}
 
-    <h2>Loser</h2>
-    {#each players as player}
-      <button on:click={()=>loserName=player.name} type="button" class={loserName==player.name?"selected":""}>{player.name}</button>
-    {/each}
-  
-    <form on:submit|preventDefault={handleSubmit}>
-      <button type="submit">Update ELO</button>
-    </form>
-<hr>
-    <h1>Scores</h1>
-<table>
-{#each players as player}
-<tr>
-  <td>{player.name}</td>
-  <td>{player.eloScore}</td>
-</tr>
-{/each}
+	<form on:submit|preventDefault={handleSubmit}>
+		<button type="submit">Update ELO</button>
+	</form>
+	<hr />
+	<h1>Scores</h1>
+	<table>
+		{#each players as player}
+			<tr>
+				<td>{player.name}</td>
+				<td>{player.eloScore}</td>
+			</tr>
+		{/each}
+	</table>
 
-</table>
-
-<hr>
-<details>
-  <summary>Add missing player</summary>
-  <form on:submit|preventDefault={handleAddPlayer}>
-    Name: <input type="text" bind:value={playerToBeCreated}>
-  </form>
-</details>
-  
-  
+	<hr />
+	<details>
+		<summary>Add missing player</summary>
+		<form on:submit|preventDefault={handleAddPlayer}>
+			Name: <input type="text" bind:value={playerToBeCreated} />
+		</form>
+	</details>
 </main>
 
-
 <style>
-  .selected{border:2px solid red}
-  </style>
+	.selected {
+		border: 2px solid red;
+	}
+</style>
