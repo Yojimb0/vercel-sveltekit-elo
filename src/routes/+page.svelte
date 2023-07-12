@@ -129,14 +129,16 @@
 </script>
 
 <main>
-	<h1>Add match</h1>
+	<h1>Ping pong scores</h1>
 	<h2>Winner</h2>
 	{#each players as player}
 		<button
 			on:click={() => (winnerName = player.name)}
 			type="button"
-			class={winnerName == player.name ? 'selected' : ''}>{player.name}</button
-		>
+			class={winnerName == player.name ? 'selected' : ''}
+    >
+      {player.name}
+      </button>
 	{/each}
 
 	<h2>Loser</h2>
@@ -144,8 +146,11 @@
 		<button
 			on:click={() => (loserName = player.name)}
 			type="button"
-			class={loserName == player.name ? 'selected' : ''}>{player.name}</button
-		>
+			class={loserName == player.name ? 'selected' : ''}
+      disabled={!winnerName || winnerName == player.name}
+    >
+      {player.name}
+      </button>
 	{/each}
 
 	<form on:submit|preventDefault={handleSubmit}>
