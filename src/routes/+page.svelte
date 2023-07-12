@@ -157,7 +157,7 @@
   <div class="players">
 	{#each players as player}
 		<button
-			on:click={() => {if(winnerName == player.name){winnerName=''}winnerName = player.name; loserName=''}}
+			on:click={() => {if(winnerName == player.name){winnerName=''}else{winnerName = player.name;} loserName=''}}
 			type="button"
 			class={winnerName == player.name ? 'selected' : ''}
     >
@@ -170,7 +170,7 @@
   <div class="players">
     {#each players as player}
       <button
-        on:click={() => {if(loserName == player.name){loserName=''}loserName = player.name}}
+        on:click={() => {if(loserName == player.name){loserName=''}else{loserName = player.name}}}
         type="button"
         class={loserName == player.name ? 'selected' : ''}
         disabled={!winnerName || winnerName == player.name}
