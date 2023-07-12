@@ -131,6 +131,7 @@
 <main>
 	<h1>Ping pong scores</h1>
 	<h2>Winner</h2>
+  <div class="players">
 	{#each players as player}
 		<button
 			on:click={() => (winnerName = player.name)}
@@ -140,8 +141,10 @@
       {player.name}
       </button>
 	{/each}
+</div>
 
 	<h2>Loser</h2>
+  <div class="players"></div>
 	{#each players as player}
 		<button
 			on:click={() => (loserName = player.name)}
@@ -152,9 +155,10 @@
       {player.name}
       </button>
 	{/each}
+</div>
 
 	<form on:submit|preventDefault={handleSubmit}>
-		<button type="submit">Update ELO</button>
+		<button type="submit">Add match</button>
 	</form>
 	<hr />
 	<h1>Scores</h1>
@@ -177,6 +181,17 @@
 </main>
 
 <style>
+  .players{
+    display:flex;gap:10px;
+  }
+  .players button{
+    border:2px solid #ddd;
+    height:35px;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:3px;
+  }
 	.selected {
 		border: 2px solid red;
 	}
