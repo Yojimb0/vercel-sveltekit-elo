@@ -226,7 +226,7 @@
 		border: 2px solid red;
 	}
 
-  .add{}
+  .add{padding-block:20px}
   .add button{
     font-size:larger;
     border:2px solid #ddd;
