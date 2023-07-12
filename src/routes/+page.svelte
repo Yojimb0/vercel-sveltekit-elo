@@ -210,7 +210,7 @@
     align-items:center;
     border-radius:3px;
   }
-	.selected {
+	.players .selected {
 		border: 2px solid red;
 	}
 </style>
