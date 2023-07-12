@@ -42,6 +42,8 @@
 	let players: Player[] = [];
 	let matches = [];
 
+	$: sortedPlayersDescending = players.sort((a, b) => b.eloScore - a.eloScore);
+
 	const calculateNewElo = ({
 		winner,
 		loser
@@ -114,6 +116,22 @@
 
 			await updateDoc(doc(db, 'players', loser.id), {
 				eloScore: newLoserElo
+			});
+
+			// optimistic update
+			players = players.map((player) => {
+				if (player.name === winner.name) {
+					return {
+						...player,
+						eloScore: newWinnerElo
+					};
+				} else if (player.name === loser.name) {
+					return {
+						...player,
+						eloScore: newLoserElo
+					};
+				}
+				return player;
 			});
 		} catch (error) {
 			console.error('Error storing names:', error);
