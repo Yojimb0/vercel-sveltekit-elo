@@ -331,6 +331,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		gap: 20px;
 	}
 	.add button {
 		font-size: larger;
@@ -347,16 +348,17 @@
 
 	.cards{
 		display: flex;
-		flex-flow:row wrap;
+		flex-flow:row nowrap;
 		gap:20px;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-start;
+		overflow-x: scroll;
 	}
 	article{
-	background:lightblue;
-	border-radius:10px;
-	padding:10px 15px 15px;
-	max-width:350px;
+		background:LightSteelBlue;
+		border-radius:10px;
+		padding:10px 15px 15px;
+		max-width:300px;
 	}
 
 	header{
@@ -366,7 +368,7 @@
 	}
 
 	table {
-		width: 300px;
+		width: 100%;
 		margin: auto;
 	}
 	table td {
