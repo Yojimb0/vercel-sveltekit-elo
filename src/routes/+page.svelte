@@ -296,6 +296,7 @@
 		font-family: 'Nunito', sans-serif;
 		margin: 0 max(10px, calc((100% - 500px) / 2));
 	}
+	:global(*, *::before, *::after){box-sizing: border-box;}
 	h1 {
 		margin: 0 0 20px;
 	}
