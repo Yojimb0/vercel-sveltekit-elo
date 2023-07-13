@@ -356,7 +356,7 @@
 		overflow-x: scroll;
 	}
 	article{
-		background:LightSteelBlue;
+		background:LightBlue;
 		border-radius:10px;
 		padding:10px 15px 15px;
 		flex: 1 0 300px;
