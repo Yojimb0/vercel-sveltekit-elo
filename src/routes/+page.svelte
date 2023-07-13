@@ -197,7 +197,7 @@
 	/>
 </svelte:head>
 <main>
-	<h1>Ping pong scores</h1>
+	<h1>🏓 Ping pong scores</h1>
 	<h2>Winner</h2>
 	<div class="players">
 		{#each players as player}
