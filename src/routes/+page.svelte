@@ -322,6 +322,7 @@
 		align-items: center;
 		border-radius: 3px;
 		cursor: pointer;
+		font-size: 18px;
 	}
 	.players .selected {
 		border: 2px solid red;
