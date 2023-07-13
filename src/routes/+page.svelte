@@ -242,10 +242,17 @@
 		<form on:submit|preventDefault={handleSubmit}>
 			<button type="submit">Add match</button>
 		</form>
+		<details>
+			<summary>Add missing player</summary>
+			<form on:submit|preventDefault={handleAddPlayer}>
+				Name: <input type="text" bind:value={playerToBeCreated} />
+			</form>
+		</details>
 	</div>
 
 	<hr />
 	
+	<div class="cards">
 	<article>
 		<header>Scores</header>
 		<table class="scores">
@@ -277,15 +284,11 @@
 			<p class="error">Error fetching matches: {JSON.stringify(error)}</p>
 		{/await}
 	</article>
+</div>
 	
 	<hr />
 
-	<details>
-		<summary>Add missing player</summary>
-		<form on:submit|preventDefault={handleAddPlayer}>
-			Name: <input type="text" bind:value={playerToBeCreated} />
-		</form>
-	</details>
+	
 </main>
 
 <style>
@@ -341,6 +344,27 @@
 		padding-inline: 10px;
 		cursor: pointer;
 	}
+
+	.cards{
+		display: flex;
+		flex-flow:row wrap;
+		gap:20px;
+		justify-content: center;
+		align-items: center;
+	}
+	article{
+	background:lightblue;
+	border-radius:10px;
+	padding:10px 15px 15px;
+	max-width:350px;
+	}
+
+	header{
+	font-family: Belanosima,sans-serif;
+	font-size:30px;
+	margin-bottom:10px;
+	}
+
 	table {
 		width: 300px;
 		margin: auto;
