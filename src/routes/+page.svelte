@@ -13,7 +13,9 @@
 		limit,
 		updateDoc,
 		doc,
-		setDoc
+		setDoc,
+		orderBy,
+		documentId
 	} from 'firebase/firestore';
 
 	const firebaseConfig = {
@@ -36,14 +38,40 @@
 		eloScore: number;
 	};
 
+	type Match = {
+		winner: string;
+		loser: string;
+		timestamp: string;
+	};
+
 	let winnerName = '';
 	let loserName = '';
 	let playerToBeCreated = 'John';
 	let players: Player[] = [];
-	let matches = [];
-  const color = ['gold', 'silver', 'darkgoldenrod']
+	let matchesPromise: Promise<void>;
+	let matches: Match[] = [];
+	let currentView: 'scores' | 'matches' = 'scores';
+	const color = ['gold', 'silver', 'darkgoldenrod'];
 
 	$: sortedPlayersDescending = players.sort((a, b) => b.eloScore - a.eloScore);
+
+	$: {
+		if (currentView === 'matches' && matches.length === 0 && !matchesPromise) {
+			const matchesRef = collection(db, 'matches');
+			const q = query(matchesRef, orderBy('timestamp', 'desc'), limit(20));
+			matchesPromise = getDocs(q).then((res) => {
+				if (res.empty) {
+					return;
+				}
+				matches = res.docs.map(
+					(doc) =>
+						({
+							...doc.data()
+						} as Match)
+				);
+			});
+		}
+	}
 
 	const calculateNewElo = ({
 		winner,
@@ -104,7 +132,9 @@
 			}
 			await setDoc(doc(db, 'matches', `${Date.now()}`), {
 				winner: winnerName,
-				loser: loserName
+				loser: loserName,
+				// can't sort descending by documentId so need to duplicate here
+				timestamp: Date.now()
 			});
 			const { winner: newWinnerElo, loser: newLoserElo } = calculateNewElo({
 				winner: winner.eloScore,
@@ -134,11 +164,21 @@
 				}
 				return player;
 			});
+
+			matches = [
+				{
+					winner: winnerName,
+					loser: loserName,
+					timestamp: Date.now()
+				},
+				...matches
+			];
 		} catch (error) {
 			console.error('Error storing names:', error);
 		}
 
-    winnerName = '';loserName = '';
+		winnerName = '';
+		loserName = '';
 	};
 
 	onMount(async () => {
@@ -150,54 +190,93 @@
 </script>
 
 <svelte:head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Belanosima&family=Nunito&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Belanosima&family=Nunito&display=swap"
+		rel="stylesheet"
+	/>
 </svelte:head>
 <main>
 	<h1>Ping pong scores</h1>
 	<h2>Winner</h2>
-  <div class="players">
-	{#each players as player}
-		<button
-			on:click={() => {if(winnerName == player.name){winnerName=''}else{winnerName = player.name;} loserName=''}}
-			type="button"
-			class={winnerName == player.name ? 'selected' : ''}
-    >
-      {player.name}
-      </button>
-	{/each}
-</div>
+	<div class="players">
+		{#each players as player}
+			<button
+				on:click={() => {
+					if (winnerName == player.name) {
+						winnerName = '';
+					} else {
+						winnerName = player.name;
+					}
+					loserName = '';
+				}}
+				type="button"
+				class={winnerName == player.name ? 'selected' : ''}
+			>
+				{player.name}
+			</button>
+		{/each}
+	</div>
 
 	<h2>Loser</h2>
-  <div class="players">
-    {#each players as player}
-      <button
-        on:click={() => {if(loserName == player.name){loserName=''}else{loserName = player.name}}}
-        type="button"
-        class={loserName == player.name ? 'selected' : ''}
-        disabled={!winnerName || winnerName == player.name}
-      >
-        {player.name}
-        </button>
-    {/each}
-  </div>
-<div class="add">
-	<form on:submit|preventDefault={handleSubmit}>
-		<button type="submit">Add match</button>
-	</form>
-</div>
-	<hr />
-	<h1>Scores</h1>
-	<table>
-		{#each players as player, i}
-			<tr style={`background:${color[i]||'white'}`}>
-				<td>{player.name}</td>
-				<td>{Math.round(player.eloScore)}</td>
-			</tr>
+	<div class="players">
+		{#each players as player}
+			<button
+				on:click={() => {
+					if (loserName == player.name) {
+						loserName = '';
+					} else {
+						loserName = player.name;
+					}
+				}}
+				type="button"
+				class={loserName == player.name ? 'selected' : ''}
+				disabled={!winnerName || winnerName == player.name}
+			>
+				{player.name}
+			</button>
 		{/each}
-	</table>
-
+	</div>
+	<div class="add">
+		<form on:submit|preventDefault={handleSubmit}>
+			<button type="submit">Add match</button>
+		</form>
+	</div>
+	<hr />
+	<button
+		on:click={() => {
+			currentView = currentView === 'scores' ? 'matches' : 'scores';
+		}}>View {currentView === 'scores' ? 'matches' : 'scores'}</button
+	>
+	{#if currentView === 'scores'}
+		<h1>Scores</h1>
+		<table class="scores">
+			{#each sortedPlayersDescending as player, i}
+				<tr style={`background:${color[i] || 'white'}`}>
+					<td>{player.name}</td>
+					<td>{Math.round(player.eloScore)}</td>
+				</tr>
+			{/each}
+		</table>
+	{:else if currentView === 'matches'}
+		{#await matchesPromise}
+			<div>Retrieving matches...</div>
+		{:then}
+			<h1>Recent matches</h1>
+			<table>
+				{#each matches as match}
+					<tr>
+						<td style="background: #C1E1C1">{match.winner}</td>
+						<td style="background: #ff6961">{match.loser}</td>
+						<td>{new Date(Number(match.timestamp)).toDateString()}</td>
+					</tr>
+				{/each}
+			</table>
+		{:catch error}
+			<p class="error">Error fetching matches: {JSON.stringify(error)}</p>
+		{/await}
+	{/if}
 	<hr />
 	<details>
 		<summary>Add missing player</summary>
@@ -208,47 +287,71 @@
 </main>
 
 <style>
-	:global(body){
+	:global(body) {
 		font-family: 'Nunito', sans-serif;
-		margin:0 max(10px, calc((100% - 500px) / 2));
+		margin: 0 max(10px, calc((100% - 500px) / 2));
 	}
-	h1{margin: 0 0 20px}
-	h2{margin: 0 0 15px}
-	h1, h2{font-family: 'Belanosima', sans-serif;}
+	h1 {
+		margin: 0 0 20px;
+	}
+	h2 {
+		margin: 0 0 15px;
+	}
+	h1,
+	h2 {
+		font-family: 'Belanosima', sans-serif;
+	}
 
-	.players{
-		display:flex;
-		gap:10px;
+	.players {
+		display: flex;
+		gap: 10px;
 		flex-flow: row wrap;
-		margin-block-end:15px
+		margin-block-end: 15px;
 	}
-	.players button{
-		border:2px solid #ddd;
-		height:35px;
-		display:inline-flex;
-		justify-content:center;
-		align-items:center;
-		border-radius:3px;
+	.players button {
+		border: 2px solid #ddd;
+		height: 35px;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 3px;
 		cursor: pointer;
 	}
 	.players .selected {
 		border: 2px solid red;
 	}
 
-	.add{padding-block:20px;display: flex;align-items: center;justify-content: center;}
-	.add button{
-		font-size:larger;
-		border:2px solid #ddd;
-		height:35px;
-		display:inline-flex;
-		justify-content:center;
-		align-items:center;
-		border-radius:3px;
+	.add {
+		padding-block: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.add button {
+		font-size: larger;
+		border: 2px solid #ddd;
+		height: 35px;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 3px;
 		font-family: 'Belanosima', sans-serif;
-		padding-inline:10px;
+		padding-inline: 10px;
 		cursor: pointer;
 	}
-	table{width: 300px;margin: auto;}
-	table td{padding:3px 8px}
-	table td:nth-child(2){text-align: right;}
+	table {
+		width: 300px;
+		margin: auto;
+	}
+	table td {
+		padding: 3px 8px;
+		white-space: nowrap;
+		text-align: left;
+	}
+	table.scores td:nth-child(2) {
+		text-align: right;
+	}
+	.error {
+		color: red;
+	}
 </style>
