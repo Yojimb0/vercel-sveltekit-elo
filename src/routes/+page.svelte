@@ -50,13 +50,12 @@
 	let players: Player[] = [];
 	let matchesPromise: Promise<void>;
 	let matches: Match[] = [];
-	let currentView: 'scores' | 'matches' = 'scores';
 	const color = ['gold', 'silver', 'darkgoldenrod'];
 
 	$: sortedPlayersDescending = players.sort((a, b) => b.eloScore - a.eloScore);
 
 	$: {
-		if (currentView === 'matches' && matches.length === 0 && !matchesPromise) {
+		if (matches.length === 0 && !matchesPromise) {
 			const matchesRef = collection(db, 'matches');
 			const q = query(matchesRef, orderBy('timestamp', 'desc'), limit(20));
 			matchesPromise = getDocs(q).then((res) => {
@@ -238,7 +237,7 @@
 			</button>
 		{/each}
 	</div>
-	
+
 	<div class="add">
 		<form on:submit|preventDefault={handleSubmit}>
 			<button type="submit">Add match</button>
