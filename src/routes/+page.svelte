@@ -208,47 +208,47 @@
 </main>
 
 <style>
-  :global(body){
-    font-family: 'Nunito', sans-serif;
-  }
-  h1, h2{
-    font-family: 'Belanosima', sans-serif;
-  }
-  .players{
-    display:flex;
-    gap:10px;
-    flex-flow: row wrap;
-  }
-  .players button{
-    border:2px solid #ddd;
-    height:35px;
-    display:inline-flex;
-    justify-content:center;
-    align-items:center;
-    border-radius:3px;
-    cursor: pointer;
-  }
+	:global(body){
+		font-family: 'Nunito', sans-serif;
+		margin:0 max(10px, calc((100% - 500px) / 2));
+	}
+	h1{margin: 0 0 20px}
+	h2{margin: 0 0 15px}
+	h1, h2{font-family: 'Belanosima', sans-serif;}
+
+	.players{
+		display:flex;
+		gap:10px;
+		flex-flow: row wrap;
+		margin-block-end:15px
+	}
+	.players button{
+		border:2px solid #ddd;
+		height:35px;
+		display:inline-flex;
+		justify-content:center;
+		align-items:center;
+		border-radius:3px;
+		cursor: pointer;
+	}
 	.players .selected {
 		border: 2px solid red;
 	}
 
-  .add{padding-block:20px;display: flex;align-items: center;justify-content: center;}
-  .add button{
-    font-size:larger;
-    border:2px solid #ddd;
-    height:35px;
-    display:inline-flex;
-    justify-content:center;
-    align-items:center;
-    border-radius:3px;
-    font-family: 'Belanosima', sans-serif;
-    padding-inline:10px;
-    cursor: pointer;
-  }
-  table{
-    width: 300px;
-    margin: auto;
-  }
-  td{padding:3px 8px}
-  td:nth-child(2){text-align: right;}
+	.add{padding-block:20px;display: flex;align-items: center;justify-content: center;}
+	.add button{
+		font-size:larger;
+		border:2px solid #ddd;
+		height:35px;
+		display:inline-flex;
+		justify-content:center;
+		align-items:center;
+		border-radius:3px;
+		font-family: 'Belanosima', sans-serif;
+		padding-inline:10px;
+		cursor: pointer;
+	}
+	table{width: 300px;margin: auto;}
+	table td{padding:3px 8px}
+	table td:nth-child(2){text-align: right;}
 </style>
