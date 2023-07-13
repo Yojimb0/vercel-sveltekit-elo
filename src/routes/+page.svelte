@@ -364,9 +364,10 @@
 	}
 
 	header{
-	font-family: Belanosima,sans-serif;
-	font-size:30px;
-	margin-bottom:10px;
+		font-family: Belanosima,sans-serif;
+		font-size:30px;
+		margin-bottom:10px;
+		color: #00000066;
 	}
 
 	table {
