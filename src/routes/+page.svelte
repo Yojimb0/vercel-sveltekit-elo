@@ -351,7 +351,7 @@
 		display: flex;
 		flex-flow:row nowrap;
 		gap:20px;
-		justify-content: center;
+		justify-content: flex-start;
 		align-items: flex-start;
 		overflow-x: scroll;
 	}
@@ -359,7 +359,7 @@
 		background:LightSteelBlue;
 		border-radius:10px;
 		padding:10px 15px 15px;
-		max-width:300px;
+		flex: 1 0 300px;
 	}
 
 	header{
