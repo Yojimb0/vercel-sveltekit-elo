@@ -238,19 +238,17 @@
 			</button>
 		{/each}
 	</div>
+	
 	<div class="add">
 		<form on:submit|preventDefault={handleSubmit}>
 			<button type="submit">Add match</button>
 		</form>
 	</div>
+
 	<hr />
-	<button
-		on:click={() => {
-			currentView = currentView === 'scores' ? 'matches' : 'scores';
-		}}>View {currentView === 'scores' ? 'matches' : 'scores'}</button
-	>
-	{#if currentView === 'scores'}
-		<h1>Scores</h1>
+	
+	<article>
+		<header>Scores</header>
 		<table class="scores">
 			{#each sortedPlayersDescending as player, i}
 				<tr style={`background:${color[i] || 'white'}`}>
@@ -259,16 +257,19 @@
 				</tr>
 			{/each}
 		</table>
-	{:else if currentView === 'matches'}
+	</article>
+
+	<article>
+		<header>Recent matches</header>
 		{#await matchesPromise}
 			<div>Retrieving matches...</div>
 		{:then}
-			<h1>Recent matches</h1>
+			
 			<table>
 				{#each matches as match}
 					<tr>
-						<td style="background: #C1E1C1">{match.winner}</td>
-						<td style="background: #ff6961">{match.loser}</td>
+						<td style="background: YellowGreen">{match.winner}</td>
+						<td style="background: LightCoral">{match.loser}</td>
 						<td>{new Date(Number(match.timestamp)).toDateString()}</td>
 					</tr>
 				{/each}
@@ -276,8 +277,10 @@
 		{:catch error}
 			<p class="error">Error fetching matches: {JSON.stringify(error)}</p>
 		{/await}
-	{/if}
+	</article>
+	
 	<hr />
+
 	<details>
 		<summary>Add missing player</summary>
 		<form on:submit|preventDefault={handleAddPlayer}>
