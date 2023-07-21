@@ -389,6 +389,7 @@
 	@keyframes vibeSilver{ 0%{translate:0px 0.129px}5%{translate:-0.77px -1.9px}10%{translate:-1.27px 1.42px}15%{translate:-1.109px -0.05044px}20%{translate:0.891px 0.2018px}25%{translate:0.75px 0.96px}30%{translate:-1.5px -0.591px}35%{translate:0.1693px 1.641px}40%{translate:0.831px -0.389px}45%{translate:0.649px 0.399px}50%{translate:-0.2096px 0.742px}55%{translate:-0.3307px 1.008px}60%{translate:-0.28px 0.972px}65%{translate:-1.35px -1.67px}70%{translate:0.52px 1.38px}75%{translate:-0.611px 0.818px}80%{translate:-1.74px 0.359px}85%{translate:-1.05px 0.149px}90%{translate:0.96px 0.472px}95%{translate:-0.0807px 0.298px} }
 	@keyframes vibeGold{ 0%{translate:-0.7px -1.08px}5%{translate:0.2598px 2px}10%{translate:-0.77px 0.5px}15%{translate:2.404px -1.21px}20%{translate:-2.02px -2.46px}25%{translate:0.8999px -0.52px}30%{translate:2.08px -0.3599px}35%{translate:-2.48px 1.31px}40%{translate:-2.36px 1.573px}45%{translate:-0.10988px 0.98px}50%{translate:-0.6499px -1.98px}55%{translate:0.5px 0.06984px}60%{translate:-0.1299px -1.62px}65%{translate:-1.53px 0.5098px}70%{translate:-1.56px 0.6699px}75%{translate:-2.21px -1.49px}80%{translate:1.15px 1.92px}85%{translate:-1.26px -1.23px}90%{translate:-1.41px -2.5px}95%{translate:2.1397px -2.4px} }
 
+	.emoji{display: inline-block;}
 	[data-position="0"] .emoji{animation: 1s linear 0s infinite alternate vibeGold;}
 	[data-position="1"] .emoji{animation: 2s linear 0s infinite alternate vibeSilver;}
 	[data-position="2"] .emoji{animation: 3s linear 0s infinite alternate vibeBronze;}
