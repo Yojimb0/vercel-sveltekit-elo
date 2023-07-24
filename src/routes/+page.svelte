@@ -53,7 +53,7 @@
 	let players: Player[] = [];
 	let matchesPromise: Promise<void>;
 	let matches: Match[] = [];
-	const color = ['gold', 'silver', 'darkgoldenrod'];
+	const color = ['gold', 'silver', 'goldenrod'];
 
 	$: sortedPlayersDescending = players.sort((a, b) => b.eloScore - a.eloScore);
 
