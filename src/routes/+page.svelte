@@ -291,18 +291,19 @@
 				<table>
 					{#each matches as match}
 						<tr>
-							<td style="background: YellowGreen"
-								>{match.winner}
-								{#if match.winnerEloChange}
+							<td style="background: YellowGreen">
+								{match.winner}
+								<!-- {#if match.winnerEloChange}
 									<sup class="elo-change positive">+{match.winnerEloChange}</sup>
-								{/if}
+								{/if} -->
 							</td>
-							<td style="background: LightCoral"
-								>{match.loser}
-								{#if match.loserEloChange}
+							<td>{#if match.winnerEloChange}{match.winnerEloChange}{/if}</td>
+							<td style="background: LightCoral">
+								{match.loser}
+								<!-- {#if match.loserEloChange}
 									<sup class="elo-change negative">{match.loserEloChange}</sup>
-								{/if}</td
-							>
+								{/if} -->
+								</td>
 							<td>{new Date(Number(match.timestamp)).toDateString()}</td>
 						</tr>
 					{/each}
