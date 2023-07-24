@@ -180,6 +180,10 @@
 		loserName = '';
 	};
 
+	function getNumberOfMatchesPlayed(playerName:string) {
+  return matches.reduce((count, match) => count + (match.winner === playerName || match.loser === playerName ? 1 : 0), 0);
+}
+
 	onMount(async () => {
 		const playersSnapshot = await getDocs(collection(db, 'players'));
 
@@ -258,7 +262,14 @@
 		<table class="scores">
 			{#each sortedPlayersDescending as player, i}
 				<tr style={`background:${color[i] || 'white'}`} data-position={i}>
-					<td><span class="emoji">{player.name.split(' ')[0]}</span> {player.name.split(' ')[1]}</td>
+					<td>
+						<details>
+							<summary><span class="emoji">{player.name.split(' ')[0]}</span> {player.name.split(' ')[1]}</summary>
+							<table>
+								<tr><td>Matches played:</td><td>{getNumberOfMatchesPlayed(player.name)}</td></tr>
+							</table>
+						</details>
+					</td>
 					<td>{Math.round(player.eloScore)}</td>
 				</tr>
 			{/each}
