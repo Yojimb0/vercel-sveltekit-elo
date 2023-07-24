@@ -420,7 +420,7 @@
 		text-align: left;
 	}
 	table td.points{
-		padding: 0;
+		padding: 0 4px;
     	text-align: center;
     	font-size: 12px;
 	}
