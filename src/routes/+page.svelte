@@ -297,7 +297,7 @@
 									<sup class="elo-change positive">+{match.winnerEloChange}</sup>
 								{/if} -->
 							</td>
-							<td>{#if match.winnerEloChange}{match.winnerEloChange}{/if}</td>
+							<td class="points">{#if match.winnerEloChange}{match.winnerEloChange}{/if}</td>
 							<td style="background: LightCoral">
 								{match.loser}
 								<!-- {#if match.loserEloChange}
@@ -418,6 +418,11 @@
 		padding: 3px 8px;
 		white-space: nowrap;
 		text-align: left;
+	}
+	table td.points{
+		padding: 0;
+    	text-align: center;
+    	font-size: 12px;
 	}
 	table.scores td:nth-child(2) {
 		text-align: right;
