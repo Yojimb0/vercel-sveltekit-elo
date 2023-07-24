@@ -304,7 +304,7 @@
 									<sup class="elo-change negative">{match.loserEloChange}</sup>
 								{/if} -->
 								</td>
-							<td>{new Date(Number(match.timestamp)).toDateString()}</td>
+							<td class="date">{new Date(Number(match.timestamp)).toDateString()}</td>
 						</tr>
 					{/each}
 				</table>
@@ -423,6 +423,10 @@
 		padding: 0;
     	text-align: center;
     	font-size: 12px;
+	}
+	table td.date{
+    	font-size: 10px;
+		opacity:.6;
 	}
 	table.scores td:nth-child(2) {
 		text-align: right;
