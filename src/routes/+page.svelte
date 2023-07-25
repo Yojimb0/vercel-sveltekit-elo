@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import EloRank from 'elo-rank';
 	// Import the Firebase SDK and initialize the Firestore database
 	import { initializeApp } from 'firebase/app';
 	import {
@@ -14,9 +13,9 @@
 		updateDoc,
 		doc,
 		setDoc,
-		orderBy,
-		documentId
+		orderBy
 	} from 'firebase/firestore';
+	import { calculateNewElo, calculateNewStreak } from '$lib/calc';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCBOYHYzC2DYlk2OUT8QDCI_19RJcoqYjk',
@@ -27,15 +26,13 @@
 		appId: '1:117068038321:web:706d5d7afc274d47446290'
 	};
 
-	// IF YOU CHANGE THIS ARG YOU SHOULD RECALCULATE ALL ELOS
-	const elo = new EloRank(40);
-
 	const app = initializeApp(firebaseConfig);
 	const db = getFirestore(app);
 
 	type Player = {
 		name: string;
 		eloScore: number;
+		streak?: number; // i.e. -2 = 2 in a row losses, 3 = 3 in a row wins
 	};
 
 	type Match = {
@@ -74,21 +71,6 @@
 			});
 		}
 	}
-
-	const calculateNewElo = ({
-		winner,
-		loser
-	}: {
-		winner: number;
-		loser: number;
-	}): { winner: number; loser: number } => {
-		const expectedScoreWinner = elo.getExpected(winner, loser);
-		const expectedScoreLoser = elo.getExpected(loser, winner);
-		return {
-			winner: elo.updateRating(expectedScoreWinner, 1, winner),
-			loser: elo.updateRating(expectedScoreLoser, 0, loser)
-		};
-	};
 
 	const getPlayer = async (name: string): Promise<(Player & { id: string }) | null> => {
 		const playersRef = collection(db, 'players');
@@ -148,11 +130,13 @@
 			});
 
 			await updateDoc(doc(db, 'players', winner.id), {
-				eloScore: newWinnerElo
+				eloScore: newWinnerElo,
+				streak: calculateNewStreak(1, winner.streak)
 			});
 
 			await updateDoc(doc(db, 'players', loser.id), {
-				eloScore: newLoserElo
+				eloScore: newLoserElo,
+				streak: calculateNewStreak(-1, loser.streak)
 			});
 
 			// optimistic update
@@ -187,9 +171,12 @@
 		loserName = '';
 	};
 
-	function getNumberOfMatchesPlayed(playerName:string) {
-  return matches.reduce((count, match) => count + (match.winner === playerName || match.loser === playerName ? 1 : 0), 0);
-}
+	function getNumberOfMatchesPlayed(playerName: string) {
+		return matches.reduce(
+			(count, match) => count + (match.winner === playerName || match.loser === playerName ? 1 : 0),
+			0
+		);
+	}
 
 	onMount(async () => {
 		const playersSnapshot = await getDocs(collection(db, 'players'));
@@ -262,7 +249,7 @@
 	</div>
 
 	<hr />
-	
+
 	<div class="cards">
 		<article>
 			<header>Scores</header>
@@ -271,7 +258,10 @@
 					<tr style={`background:${color[i] || 'white'}`} data-position={i}>
 						<td>
 							<details>
-								<summary><span class="emoji">{player.name.split(' ')[0]}</span> {player.name.split(' ')[1]}</summary>
+								<summary
+									><span class="emoji">{player.name.split(' ')[0]}</span>
+									{player.name.split(' ')[1]}</summary
+								>
 								<table>
 									<tr><td>Matches played:</td><td>{getNumberOfMatchesPlayed(player.name)}</td></tr>
 								</table>
@@ -297,13 +287,15 @@
 									<sup class="elo-change positive">+{match.winnerEloChange}</sup>
 								{/if} -->
 							</td>
-							<td class="points">{#if match.winnerEloChange}{match.winnerEloChange}{/if}</td>
+							<td class="points"
+								>{#if match.winnerEloChange}{match.winnerEloChange}{/if}</td
+							>
 							<td style="background: LightCoral">
 								{match.loser}
 								<!-- {#if match.loserEloChange}
 									<sup class="elo-change negative">{match.loserEloChange}</sup>
 								{/if} -->
-								</td>
+							</td>
 							<td class="date">{new Date(Number(match.timestamp)).toDateString()}</td>
 						</tr>
 					{/each}
@@ -419,14 +411,14 @@
 		white-space: nowrap;
 		text-align: left;
 	}
-	table td.points{
+	table td.points {
 		padding: 0 4px;
-    	text-align: center;
-    	font-size: 12px;
+		text-align: center;
+		font-size: 12px;
 	}
-	table td.date{
-    	font-size: 10px;
-		opacity:.6;
+	table td.date {
+		font-size: 10px;
+		opacity: 0.6;
 	}
 	table.scores td:nth-child(2) {
 		text-align: right;
