@@ -50,6 +50,7 @@
 	let players: Player[] = [];
 	let matchesPromise: Promise<void>;
 	let matches: Match[] = [];
+	let showNoPeopleWithMatches = false;
 	const color = ['gold', 'silver', 'goldenrod'];
 
 	$: sortedPlayersDescending = players.sort((a, b) => b.eloScore - a.eloScore);
@@ -255,7 +256,7 @@
 			<header>Scores</header>
 			<table class="scores">
 				{#each sortedPlayersDescending as player, i}
-					<tr style={`background:${color[i] || 'white'}`} data-position={i}>
+					<tr style={`background:${color[i] || 'white'}`} data-position={i} data-hide={showNoPeopleWithMatches && getNumberOfMatchesPlayed(player.name)==0}>
 						<td>
 							<details>
 								<summary
@@ -274,6 +275,10 @@
 					</tr>
 				{/each}
 			</table>
+			<label>
+				<span>Show people with no matches</span>
+				<input type="checkbox" bind:value={showNoPeopleWithMatches}>
+			</label>
 		</article>
 
 		<article>
@@ -408,6 +413,9 @@
 	table {
 		width: 100%;
 		margin: auto;
+	}
+	table tr[data-hide="true"]{
+		display:none
 	}
 	table td {
 		padding: 3px 8px;
