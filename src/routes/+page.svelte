@@ -439,7 +439,7 @@
 		border-collapse: collapse;
 	}
 	table.stats td{
-		border:1px solid #00000088;
+		border:1px solid #00000022;
 		padding:2px;
 		font-size:16px;
 	}
