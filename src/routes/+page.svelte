@@ -264,6 +264,9 @@
 								>
 								<table>
 									<tr><td>Matches played:</td><td>{getNumberOfMatchesPlayed(player.name)}</td></tr>
+									{#if player.streak && Math.abs(player.streak)>1}
+										<tr><td>{player.streak>=0?'Winning':'Losing'} streak:</td><td>{Math.abs(player.streak)}</td></tr>
+									{/if}
 								</table>
 							</details>
 						</td>
