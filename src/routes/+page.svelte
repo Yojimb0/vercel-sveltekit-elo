@@ -263,7 +263,7 @@
 									><span class="emoji">{player.name.split(' ')[0]}</span>
 									{player.name.split(' ')[1]}</summary
 								>
-								<table>
+								<table class="stats">
 									<tr><td>Matches played:</td><td>{getNumberOfMatchesPlayed(player.name)}</td></tr>
 									{#if player.streak && Math.abs(player.streak)>1}
 										<tr><td>{player.streak>=0?'Winning':'Losing'} streak:</td><td>{Math.abs(player.streak)}</td></tr>
@@ -433,6 +433,15 @@
 	}
 	table.scores td:nth-child(2) {
 		text-align: right;
+	}
+
+	table.stats{
+		border-collapse: collapse;
+	}
+	table.stats td{
+		border:1px solid #00000088;
+		padding:2px;
+		font-size:16px;
 	}
 	.error {
 		color: red;
