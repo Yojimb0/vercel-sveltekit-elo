@@ -58,7 +58,7 @@
 	$: {
 		if (matches.length === 0 && !matchesPromise) {
 			const matchesRef = collection(db, 'matches');
-			const q = query(matchesRef, orderBy('timestamp', 'desc'), limit(20));
+			const q = query(matchesRef, orderBy('timestamp', 'desc'));
 			matchesPromise = getDocs(q).then((res) => {
 				if (res.empty) {
 					return;
@@ -256,7 +256,11 @@
 			<header>Scores</header>
 			<table class="scores">
 				{#each sortedPlayersDescending as player, i}
-					<tr style={`background:${color[i] || 'white'}`} data-position={i} data-hide={hidePeopleWithNoMatches && getNumberOfMatchesPlayed(player.name)==0}>
+					<tr
+						style={`background:${color[i] || 'white'}`}
+						data-position={i}
+						data-hide={hidePeopleWithNoMatches && getNumberOfMatchesPlayed(player.name) == 0}
+					>
 						<td>
 							<details>
 								<summary
@@ -265,8 +269,12 @@
 								>
 								<table class="stats">
 									<tr><td>Matches played:</td><td>{getNumberOfMatchesPlayed(player.name)}</td></tr>
-									{#if player.streak && Math.abs(player.streak)>1}
-										<tr><td>{player.streak>=0?'Winning':'Losing'} streak:</td><td>{Math.abs(player.streak)}</td></tr>
+									{#if player.streak && Math.abs(player.streak) > 1}
+										<tr
+											><td>{player.streak >= 0 ? 'Winning' : 'Losing'} streak:</td><td
+												>{Math.abs(player.streak)}</td
+											></tr
+										>
 									{/if}
 								</table>
 							</details>
@@ -277,7 +285,7 @@
 			</table>
 			<label>
 				<span>Hide people with no matches</span>
-				<input type="checkbox" bind:checked={hidePeopleWithNoMatches}>
+				<input type="checkbox" bind:checked={hidePeopleWithNoMatches} />
 			</label>
 		</article>
 
@@ -414,8 +422,8 @@
 		width: 100%;
 		margin: auto;
 	}
-	table tr[data-hide="true"]{
-		display:none
+	table tr[data-hide='true'] {
+		display: none;
 	}
 	table td {
 		padding: 3px 8px;
@@ -435,13 +443,13 @@
 		text-align: right;
 	}
 
-	table.stats{
+	table.stats {
 		border-collapse: collapse;
 	}
-	table.stats td{
-		border:1px solid #00000022;
-		padding:2px;
-		font-size:16px;
+	table.stats td {
+		border: 1px solid #00000022;
+		padding: 2px;
+		font-size: 16px;
 	}
 	.error {
 		color: red;
