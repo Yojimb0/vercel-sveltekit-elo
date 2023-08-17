@@ -49,6 +49,7 @@
 	let playerToBeCreated = 'John';
 	let players: Player[] = [];
 	let matchesPromise: Promise<void>;
+	let headToHeadRecords: Record<string, Record<string, number>> = {};
 	let matches: Match[] = [];
 	let hidePeopleWithNoMatches = true;
 	const color = ['gold', 'silver', 'goldenrod'];
@@ -105,6 +106,20 @@
 		console.log(playerToBeCreated);
 		await createPlayerIfNotExists(playerToBeCreated);
 		window.location.reload();
+	};
+
+	const getHeadToHead = () => {
+		if (Object.keys(headToHeadRecords).length) return headToHeadRecords;
+		const records: Record<string, Record<string, number>> = {};
+
+		matches.forEach((match) => {
+			const { winner, loser } = match;
+
+			records[winner] = records[winner] || {};
+			records[winner][loser] = (records[winner][loser] || 0) + 1;
+		});
+		headToHeadRecords = records;
+		return records;
 	};
 
 	const handleSubmit = async () => {
@@ -299,18 +314,17 @@
 						<tr>
 							<td style="background: YellowGreen">
 								{match.winner}
-								<!-- {#if match.winnerEloChange}
-									<sup class="elo-change positive">+{match.winnerEloChange}</sup>
-								{/if} -->
 							</td>
-							<td class="points"
-								>{#if match.winnerEloChange}{match.winnerEloChange}{/if}</td
-							>
+							<td class="points">
+									{#if match.winnerEloChange}{match.winnerEloChange}{/if}
+									<span class='head-to-head'>
+										{getHeadToHead()[match.winner]?.[match.loser] || 0}
+										-
+										{getHeadToHead()[match.loser]?.[match.winner] || 0}
+									</span>
+							</td>
 							<td style="background: LightCoral">
 								{match.loser}
-								<!-- {#if match.loserEloChange}
-									<sup class="elo-change negative">{match.loserEloChange}</sup>
-								{/if} -->
 							</td>
 							<td class="date">{new Date(Number(match.timestamp)).toDateString()}</td>
 						</tr>
@@ -388,14 +402,6 @@
 		font-size: 10px;
 	}
 
-	.positive {
-		color: #08ff08;
-	}
-
-	.negative {
-		color: #ff2226;
-	}
-
 	.cards {
 		display: flex;
 		flex-flow: row nowrap;
@@ -404,6 +410,15 @@
 		align-items: flex-start;
 		overflow-x: scroll;
 	}
+
+	.head-to-head {
+		color: gray;
+		font-size: 9px;
+		margin-top: -3px;
+		display: flex;
+		flex-direction: column;
+	}
+
 	article {
 		background: LightBlue;
 		border-radius: 10px;
@@ -433,7 +448,7 @@
 	table td.points {
 		padding: 0 4px;
 		text-align: center;
-		font-size: 12px;
+		font-size: 14px;
 	}
 	table td.date {
 		font-size: 10px;
