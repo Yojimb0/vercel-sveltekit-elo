@@ -187,11 +187,21 @@
 		loserName = '';
 	};
 
-	function getNumberOfMatchesPlayed(playerName: string) {
-		return matches.reduce(
-			(count, match) => count + (match.winner === playerName || match.loser === playerName ? 1 : 0),
-			0
-		);
+	function getWinrate(playerName: string) {
+		let wins = 0;
+		let total = 0;
+		for (const match of matches) {
+			if (match.winner === playerName) {
+				wins++;
+				total++;
+			} else if (match.loser === playerName) {
+				total++;
+			}
+		}
+
+		if (total === 0) return -1;
+
+		return Math.round((wins / total) * 100) || 0;
 	}
 
 	onMount(async () => {
@@ -274,7 +284,7 @@
 					<tr
 						style={`background:${color[i] || 'white'}`}
 						data-position={i}
-						data-hide={hidePeopleWithNoMatches && getNumberOfMatchesPlayed(player.name) == 0}
+						data-hide={hidePeopleWithNoMatches && getWinrate(player.name) === -1}
 					>
 						<td>
 							<details>
@@ -283,7 +293,7 @@
 									{player.name.split(' ')[1]}</summary
 								>
 								<table class="stats">
-									<tr><td>Matches played:</td><td>{getNumberOfMatchesPlayed(player.name)}</td></tr>
+									<tr><td>Win rate:</td><td>{getWinrate(player.name)}%</td></tr>
 									{#if player.streak && Math.abs(player.streak) > 1}
 										<tr
 											><td>{player.streak >= 0 ? 'Winning' : 'Losing'} streak:</td><td
@@ -316,12 +326,12 @@
 								{match.winner}
 							</td>
 							<td class="points">
-									{#if match.winnerEloChange}{match.winnerEloChange}{/if}
-									<span class='head-to-head'>
-										{getHeadToHead()[match.winner]?.[match.loser] || 0}
-										-
-										{getHeadToHead()[match.loser]?.[match.winner] || 0}
-									</span>
+								{#if match.winnerEloChange}{match.winnerEloChange}{/if}
+								<span class="head-to-head">
+									{getHeadToHead()[match.winner]?.[match.loser] || 0}
+									-
+									{getHeadToHead()[match.loser]?.[match.winner] || 0}
+								</span>
 							</td>
 							<td style="background: LightCoral">
 								{match.loser}
@@ -396,10 +406,6 @@
 		font-family: 'Belanosima', sans-serif;
 		padding-inline: 10px;
 		cursor: pointer;
-	}
-
-	.elo-change {
-		font-size: 10px;
 	}
 
 	.cards {
